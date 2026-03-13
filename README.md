@@ -42,7 +42,7 @@ If running from Docker, use:
         "run",
         "--rm",
         "-i",
-        "gemara-mcp:latest",
+        "ghcr.io/gemaraproj/gemara-mcp:latest",
         "serve"
       ]
     }
@@ -50,15 +50,44 @@ If running from Docker, use:
 }
 ```
 
-## Available Tools
+## Server Modes
 
-The server provides read-only information about Gemara artifacts in the workspace.
+The server operates in one of two modes, selected with the `--mode` flag (default: `artifact`).
 
-- **get_lexicon**: Retrieve Gemara lexicon entries
-- **validate_gemara_artifact**: Validate YAML artifacts against Gemara schema definitions
-- **get_schema_docs**: Retrieve schema documentation for the Gemara CUE module
+| Mode | Purpose |
+|:---|:---|
+| `advisory` | Read-only analysis and validation of existing artifacts |
+| `artifact` | All advisory capabilities plus guided artifact creation wizards |
 
-### Building Docker Image
+```bash
+gemara-mcp serve --mode advisory
+gemara-mcp serve --mode artifact
+```
+
+## Available Tools, Resources, and Prompts
+
+### Tools
+
+| Tool | Description |
+|:---|:---|
+| `validate_gemara_artifact` | Validate YAML content against Gemara CUE schema definitions |
+
+### Resources
+
+| Resource URI | Description |
+|:---|:---|
+| `gemara://lexicon` | Term definitions for the Gemara security model |
+| `gemara://schema/definitions` | CUE schema definitions for all Gemara artifact types (latest version) |
+| `gemara://schema/definitions{?version}` | CUE schema definitions for a specific Gemara module version |
+
+### Prompts (artifact mode only)
+
+| Prompt | Description |
+|:---|:---|
+| `threat_assessment` | Interactive wizard for creating a Gemara-compatible Threat Catalog |
+| `control_catalog` | Interactive wizard for creating a Gemara-compatible Control Catalog |
+
+## Building Docker Image
 
 ```bash
 docker build --build-arg VERSION=$(git describe --tags --always) --build-arg BUILD=$(git rev-parse --short HEAD) -t gemara-mcp .
